@@ -18,13 +18,14 @@ function Get-FavoriteDirectory {
     if (Test-Path -Path $registryPath) {
         $content = Get-Content -Path $registryPath -Raw
         if (-not [string]::IsNullOrWhiteSpace($content)) {
-            $registry = $content | ConvertFrom-Json
-            if ($registry.PSObject.Properties.Name -contains $Name) {
+            $registry = $content | ConvertFrom-Json -AsHashtable
+            if ($registry.ContainsKey($Name)) {
                 return $registry.$Name
             }
         }
     }
-    Write-Error "Favorite directory '$Name' not found."
+    Write-Warning "Favorite directory '$Name' not found."
+    return $null
 }
 
 function Set-FavoriteDirectory {
@@ -42,15 +43,11 @@ function Set-FavoriteDirectory {
     if (Test-Path -Path $registryPath) {
         $content = Get-Content -Path $registryPath -Raw
         if (-not [string]::IsNullOrWhiteSpace($content)) {
-            $registry = $content | ConvertFrom-Json
+            $registry = $content | ConvertFrom-Json -AsHashtable
         }
     }
 
-    if ($registry.PSObject.Properties.Name -contains $Name) {
-        $registry.$Name = $Path
-    } else {
-        $registry | Add-Member -MemberType NoteProperty -Name $Name -Value $Path
-    }
+    $registry[$Name] = $Path
 
     $registry | ConvertTo-Json | Set-Content -Path $registryPath
 }
@@ -74,12 +71,12 @@ function Remove-FavoriteDirectory {
         return
     }
 
-    $registry = $content | ConvertFrom-Json
-    if ($registry.PSObject.Properties.Name -contains $Name) {
-        $registry.PSObject.Properties.Remove($Name)
+    $registry = $content | ConvertFrom-Json -AsHashtable
+    if ($registry.ContainsKey($Name)) {
+        $registry.Remove($Name)
         $registry | ConvertTo-Json | Set-Content -Path $registryPath
     } else {
-        Write-Error "Favorite directory '$Name' not found."
+        Write-Warning "Favorite directory '$Name' not found."
     }
 }
 

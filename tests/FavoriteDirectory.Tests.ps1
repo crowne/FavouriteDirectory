@@ -2,8 +2,8 @@ BeforeAll {
     # Import the module being tested
     Import-Module -Name .\FavoriteDirectory\FavoriteDirectory.psd1 -Force
 
-    # Define a temporary path for the test registry
-    $script:testRegistryPath = Join-Path -Path $env:TEMP -ChildPath "TestFavoriteDirectoryRegistry.json"
+    # Define a temporary path for the test registry in the same directory as the test script
+    $script:testRegistryPath = Join-Path -Path $PSScriptRoot -ChildPath "TestFavoriteDirectoryRegistry.json"
 
     # Mock the Get-FavoriteDirectoryRegistryPath function to use the test path
     Mock -CommandName Get-FavoriteDirectoryRegistryPath -MockWith { return $script:testRegistryPath }
@@ -24,7 +24,7 @@ Describe 'Favorite Directory Functions' {
     Context 'Set-FavoriteDirectory' {
         It 'Should add a new favorite directory' {
             Set-FavoriteDirectory -Name 'test' -Path 'C:\test'
-            $registry = Get-Content -Path $script:testRegistryPath | ConvertFrom-Json
+            $registry = Get-Content -Path $script:testRegistry_path | ConvertFrom-Json -AsHashtable
             $registry.test | Should -Be 'C:\test'
         }
     }
@@ -36,8 +36,9 @@ Describe 'Favorite Directory Functions' {
             $path | Should -Be 'C:\testget'
         }
 
-        It 'Should throw an error for a non-existent favorite directory' {
-            { Get-FavoriteDirectory -Name 'nonexistent' } | Should -Throw
+        It 'Should return null for a non-existent favorite directory' {
+            $path = Get-FavoriteDirectory -Name 'nonexistent'
+            $path | Should -BeNull
         }
     }
 
@@ -49,8 +50,8 @@ Describe 'Favorite Directory Functions' {
             $registry.PSObject.Properties.Name | Should -Not -Contains 'testremove'
         }
 
-        It 'Should throw an error for a non-existent favorite directory' {
-            { Remove-FavoriteDirectory -Name 'nonexistent' } | Should -Throw
+        It 'Should not throw an error for a non-existent favorite directory' {
+            { Remove-FavoriteDirectory -Name 'nonexistent' } | Should -Not -Throw
         }
     }
 }

@@ -9,7 +9,5 @@
     PowerShellVersion = '5.1'
     DotNetFrameworkVersion = '4.5.2'
     RequiredModules = @()
-    Tags = @('Favorite', 'Directory', 'Alias')
-    HelpInfoURI = ''
-    ReleaseNotes = @()
+    
 }

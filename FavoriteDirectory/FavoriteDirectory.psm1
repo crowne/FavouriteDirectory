@@ -64,7 +64,7 @@ function Remove-FavoriteDirectory {
 
     $registryPath = Get-FavoriteDirectoryRegistryPath
     if (-not (Test-Path -Path $registryPath)) {
-        Write-Error "Favorite directory registry not found."
+        Write-Error "Favorite directory registry not found." -ErrorAction Stop
         return
     }
     
@@ -83,4 +83,4 @@ function Remove-FavoriteDirectory {
     }
 }
 
-Export-ModuleMember -Function Get-FavoriteDirectory, Set-FavoriteDirectory, Remove-FavoriteDirectory
+Export-ModuleMember -Function Get-FavoriteDirectory, Set-FavoriteDirectory, Remove-FavoriteDirectory, Get-FavoriteDirectoryRegistryPath

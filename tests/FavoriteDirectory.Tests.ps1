@@ -17,6 +17,10 @@ AfterAll {
 }
 
 Describe 'Favorite Directory Functions' {
+    BeforeEach {
+        # Ensure a clean test registry file before each test
+        Set-Content -Path $script:testRegistryPath -Value "{}" -Force
+    }
     Context 'Set-FavoriteDirectory' {
         It 'Should add a new favorite directory' {
             Set-FavoriteDirectory -Name 'test' -Path 'C:\test'

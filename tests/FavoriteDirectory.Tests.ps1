@@ -6,7 +6,7 @@ BeforeAll {
     $script:testRegistryPath = Join-Path -Path $PSScriptRoot -ChildPath "TestFavoriteDirectoryRegistry.json"
 
     # Mock the Get-FavoriteDirectoryRegistryPath function to use the test path
-    Mock -CommandName Get-FavoriteDirectoryRegistryPath -MockWith { return $script:testRegistryPath }
+    Mock -CommandName Get-FavoriteDirectoryRegistryPath -ModuleName FavoriteDirectory -MockWith { return $script:testRegistryPath }
 }
 
 AfterAll {

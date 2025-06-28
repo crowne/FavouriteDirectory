@@ -157,6 +157,22 @@ function Get-FavouriteDirectoryList {
 
 <#
 .SYNOPSIS
+    Gets the version of favourite directory module.
+.DESCRIPTION
+    This function returns the version of favourite directory module.
+.OUTPUTS
+    System.String
+#>
+function Get-FavouriteDirectoryVersion {
+        # Get the path to the manifest file
+        $manifestPath = Join-Path -Path $PSScriptRoot -ChildPath 'FavouriteDirectory.psd1'
+        # Import the manifest as a hashtable
+        $manifest = Import-PowerShellDataFile -Path $manifestPath
+        return $manifest.ModuleVersion
+}
+
+<#
+.SYNOPSIS
     Shows the help message for the FavouriteDirectory module.
 .DESCRIPTION
     This function displays the usage information for the FavouriteDirectory module.
@@ -266,6 +282,12 @@ function Invoke-FavouriteDirectory {
         '-registry' {
             Get-FavouriteDirectoryRegistryPath
         }
+        '-v' {
+            Write-Output "FavouriteDirectory-$(Get-FavouriteDirectoryVersion)"
+        }
+        '-version' {
+            Write-Output "FavouriteDirectory-$(Get-FavouriteDirectoryVersion)"
+        }
         '-h' {
             Show-FavouriteDirectoryHelp
         }
@@ -283,4 +305,4 @@ function Invoke-FavouriteDirectory {
 
 New-Alias -Name fd -Value Invoke-FavouriteDirectory
 
-Export-ModuleMember -Function Get-FavouriteDirectory, Set-FavouriteDirectory, Remove-FavouriteDirectory, Get-FavouriteDirectoryRegistryPath, Get-FavouriteDirectoryList, Invoke-FavouriteDirectory, Show-FavouriteDirectoryHelp -Alias fd
+Export-ModuleMember -Function Get-FavouriteDirectory, Set-FavouriteDirectory, Remove-FavouriteDirectory, Get-FavouriteDirectoryRegistryPath, Get-FavouriteDirectoryList, Get-FavouriteDirectoryVersion, Invoke-FavouriteDirectory, Show-FavouriteDirectoryHelp -Alias fd

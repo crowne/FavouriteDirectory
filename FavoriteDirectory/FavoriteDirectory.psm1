@@ -172,6 +172,7 @@ Usage:
     fd -a <name> <path>
     fd -l [<name>]
     fd -d <name>
+    fd -r
     fd -h | -help
 
 Actions:
@@ -179,6 +180,7 @@ Actions:
     -a, -add            Add a new favorite directory.
     -l, -list           List all favorite directories or a specific one.
     -d, -delete         Delete a favorite directory.
+    -r, -registry       Show the location of the registry.
     -h, -help           Show this help message.
 "
 }
@@ -215,8 +217,6 @@ function Invoke-FavoriteDirectory {
         $Path = $Arguments[2]
     }
     
-    Write-Output "Action: $Action Alias: $Alias Path: $Path"
-
     switch ($Action) {
         '-l' {
             if (-not $Alias) {
@@ -259,6 +259,12 @@ function Invoke-FavoriteDirectory {
                 return
             }
             Remove-FavoriteDirectory -Name $Alias
+        }
+        '-r' {
+            Get-FavoriteDirectoryRegistryPath
+        }
+        '-registry' {
+            Get-FavoriteDirectoryRegistryPath
         }
         '-h' {
             Show-FavoriteDirectoryHelp

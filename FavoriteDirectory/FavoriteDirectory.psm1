@@ -208,50 +208,57 @@ function Invoke-FavoriteDirectory {
     }
 
     $Action = $Arguments[0]
-    $RemainingArgs = if ($Arguments.Count -gt 1) { $Arguments[1..($Arguments.Count - 1)] } else { @() }
+    if ($Arguments.Count -gt 1) {
+        $Alias = $Arguments[1]
+    }
+    if ($Arguments.Count -gt 1) {
+        $Path = $Arguments[2]
+    }
     
+    Write-Output "Action: $Action Alias: $Alias Path: $Path"
+
     switch ($Action) {
         '-l' {
-            if ($RemainingArgs.Length -eq 0) {
+            if (-not $Alias) {
                 Get-FavoriteDirectoryList
             } else {
-                Get-FavoriteDirectory -Name $RemainingArgs[0]
+                Get-FavoriteDirectory -Name $Alias
             }
         }
         '-list' {
-            if ($RemainingArgs.Length -eq 0) {
+            if (-not $Alias) {
                 Get-FavoriteDirectoryList
             } else {
-                Get-FavoriteDirectory -Name $RemainingArgs[0]
+                Get-FavoriteDirectory -Name $Alias
             }
         }
         '-a' {
-            if ($RemainingArgs.Length -ne 2) {
+            if (-not $Path) {
                 Write-Error "-a or -add requires two arguments: name and path."
                 return
             }
-            Set-FavoriteDirectory -Name $RemainingArgs[0] -Path $RemainingArgs[1]
+            Set-FavoriteDirectory -Name $Alias -Path $Path
         }
         '-add' {
-            if ($RemainingArgs.Length -ne 2) {
+            if (-not $Path) {
                 Write-Error "-a or -add requires two arguments: name and path."
                 return
             }
-            Set-FavoriteDirectory -Name $RemainingArgs[0] -Path $RemainingArgs[1]
+            Set-FavoriteDirectory -Name $Alias -Path $Path
         }
         '-d' {
-            if ($RemainingArgs.Length -ne 1) {
+            if (-not $Alias) {
                 Write-Error "-d or -delete requires one argument: name."
                 return
             }
-            Remove-FavoriteDirectory -Name $RemainingArgs[0]
+            Remove-FavoriteDirectory -Name $Alias
         }
         '-delete' {
-            if ($RemainingArgs.Length -ne 1) {
+            if (-not $Alias) {
                 Write-Error "-d or -delete requires one argument: name."
                 return
             }
-            Remove-FavoriteDirectory -Name $RemainingArgs[0]
+            Remove-FavoriteDirectory -Name $Alias
         }
         '-h' {
             Show-FavoriteDirectoryHelp

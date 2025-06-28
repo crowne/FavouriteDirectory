@@ -1,7 +1,7 @@
 # FavoriteDirectory
 
 A PowerShell module to manage favorite directory aliases.
-This module was written using Gemini cli and claude-code as a learning kata for me to become familiar with the ai code tools.
+This module was written using Gemini cli, claude-code and co-pilot as a learning kata for me to become familiar with the ai code tools.
 
 ## Installation
 

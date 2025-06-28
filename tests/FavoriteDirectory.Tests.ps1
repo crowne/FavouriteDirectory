@@ -54,4 +54,20 @@ Describe 'Favorite Directory Functions' {
             { Remove-FavoriteDirectory -Name 'nonexistent' } | Should -Not -Throw
         }
     }
+
+    Context 'Get-FavoriteDirectoryList' {
+        It 'Should return all favorite directories' {
+            Set-FavoriteDirectory -Name 'test1' -Path 'C:\test1'
+            Set-FavoriteDirectory -Name 'test2' -Path 'C:\test2'
+            $list = Get-FavoriteDirectoryList
+            $list.Count | Should -Be 2
+            $list['test1'] | Should -Be 'C:\test1'
+            $list['test2'] | Should -Be 'C:\test2'
+        }
+
+        It 'Should return an empty hashtable when no favorites are set' {
+            $list = Get-FavoriteDirectoryList
+            $list.Count | Should -Be 0
+        }
+    }
 }

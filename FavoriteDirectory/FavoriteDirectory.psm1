@@ -80,4 +80,21 @@ function Remove-FavoriteDirectory {
     }
 }
 
-Export-ModuleMember -Function Get-FavoriteDirectory, Set-FavoriteDirectory, Remove-FavoriteDirectory, Get-FavoriteDirectoryRegistryPath
+function Get-FavoriteDirectoryList {
+    [CmdletBinding()]
+    param ()
+
+    $registryPath = Get-FavoriteDirectoryRegistryPath
+    if (-not (Test-Path -Path $registryPath)) {
+        return @{}
+    }
+    
+    $content = Get-Content -Path $registryPath -Raw
+    if ([string]::IsNullOrWhiteSpace($content)) {
+        return @{}
+    }
+
+    return $content | ConvertFrom-Json -AsHashtable
+}
+
+Export-ModuleMember -Function Get-FavoriteDirectory, Set-FavoriteDirectory, Remove-FavoriteDirectory, Get-FavoriteDirectoryRegistryPath, Get-FavoriteDirectoryList

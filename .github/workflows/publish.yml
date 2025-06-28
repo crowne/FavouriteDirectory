@@ -12,9 +12,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install PowerShell
-        uses: PowerShell/PowerShell@v1
-
       - name: Publish module to PowerShell Gallery
         shell: pwsh
         run: |

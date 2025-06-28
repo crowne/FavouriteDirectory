@@ -107,5 +107,15 @@ Describe 'Favorite Directory Functions' {
         It 'Should not allow adding a favorite with a name starting with a hyphen' {
             { Invoke-FavoriteDirectory -Action '-a' -Arguments '-invalid', 'C:\invalid' } | Should -Throw
         }
+
+        It 'Should display help with -h' {
+            $result = Invoke-FavoriteDirectory -Action '-h'
+            $result | Should -Not -BeNullOrEmpty
+        }
+
+        It 'Should display help with -help' {
+            $result = Invoke-FavoriteDirectory -Action '-help'
+            $result | Should -Not -BeNullOrEmpty
+        }
     }
 }

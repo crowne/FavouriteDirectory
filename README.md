@@ -1,6 +1,6 @@
-# FavoriteDirectory
+# FavouriteDirectory
 
-A PowerShell module to manage favorite directory aliases.
+A PowerShell module to manage favourite directory aliases.
 This module was written using Gemini cli, claude-code and co-pilot as a learning kata for me to become familiar with the ai code tools.
 
 ## Installation
@@ -8,36 +8,36 @@ This module was written using Gemini cli, claude-code and co-pilot as a learning
 To install the module, run the following command:
 
 ```powershell
-Import-Module -Name "C:\github\crowne\FavoriteDirectory\FavoriteDirectory\FavoriteDirectory.psd1"
+Import-Module -Name "C:\github\crowne\FavouriteDirectory\FavouriteDirectory\FavouriteDirectory.psd1"
 ```
 
 ## Usage
 
-### Add a favorite directory
+### Add a favourite directory
 
 ```powershell
 fd -a <name> <path>
 ```
 
-### List favorite directories
+### List favourite directories
 
 ```powershell
 fd -l
 ```
 
-### Get a favorite directory
+### Get a favourite directory
 
 ```powershell
 fd -l <name>
 ```
 
-### Remove a favorite directory
+### Remove a favourite directory
 
 ```powershell
 fd -d <name>
 ```
 
-### Go to a favorite directory
+### Go to a favourite directory
 
 ```powershell
 fd <name>

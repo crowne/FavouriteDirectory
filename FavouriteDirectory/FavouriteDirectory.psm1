@@ -1,40 +1,40 @@
 <#
 .SYNOPSIS
-    Gets the path to the favorite directory registry file.
+    Gets the path to the favourite directory registry file.
 .DESCRIPTION
-    This function returns the path to the favorite directory registry file. It creates the directory if it does not exist.
+    This function returns the path to the favourite directory registry file. It creates the directory if it does not exist.
 .OUTPUTS
     System.String
 #>
-function Get-FavoriteDirectoryRegistryPath {
+function Get-FavouriteDirectoryRegistryPath {
     $appDataPath = [System.Environment]::GetFolderPath('ApplicationData')
-    $registryDir = Join-Path -Path $appDataPath -ChildPath 'FavoriteDirectory'
+    $registryDir = Join-Path -Path $appDataPath -ChildPath 'FavouriteDirectory'
     if (-not (Test-Path -Path $registryDir)) {
         New-Item -Path $registryDir -ItemType Directory -Force | Out-Null
     }
-    Join-Path -Path $registryDir -ChildPath 'FavoriteDirectoryRegistry.json'
+    Join-Path -Path $registryDir -ChildPath 'FavouriteDirectoryRegistry.json'
 }
 
 <#
 .SYNOPSIS
-    Gets a favorite directory by name.
+    Gets a favourite directory by name.
 .DESCRIPTION
-    This function retrieves a favorite directory by its name from the registry.
+    This function retrieves a favourite directory by its name from the registry.
 .PARAMETER Name
-    The name of the favorite directory to retrieve.
+    The name of the favourite directory to retrieve.
 .INPUTS
     System.String
 .OUTPUTS
     System.String
 #>
-function Get-FavoriteDirectory {
+function Get-FavouriteDirectory {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [string]$Name
     )
 
-    $registryPath = Get-FavoriteDirectoryRegistryPath
+    $registryPath = Get-FavouriteDirectoryRegistryPath
     if (Test-Path -Path $registryPath) {
         $content = Get-Content -Path $registryPath -Raw
         if (-not [string]::IsNullOrWhiteSpace($content)) {
@@ -44,25 +44,25 @@ function Get-FavoriteDirectory {
             }
         }
     }
-    Write-Warning "Favorite directory '$Name' not found."
+    Write-Warning "Favourite directory '$Name' not found."
     return $null
 }
 
 <#
 .SYNOPSIS
-    Sets a favorite directory.
+    Sets a favourite directory.
 .DESCRIPTION
-    This function sets a favorite directory by name and path.
+    This function sets a favourite directory by name and path.
 .PARAMETER Name
-    The name of the favorite directory to set.
+    The name of the favourite directory to set.
 .PARAMETER Path
-    The path of the favorite directory to set.
+    The path of the favourite directory to set.
 .INPUTS
     System.String
 .OUTPUTS
     None
 #>
-function Set-FavoriteDirectory {
+function Set-FavouriteDirectory {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true, Position = 0)]
@@ -73,10 +73,10 @@ function Set-FavoriteDirectory {
     )
 
     if ($Name.StartsWith('-')) {
-        throw "Favorite directory name cannot start with a hyphen."
+        throw "Favourite directory name cannot start with a hyphen."
     }
 
-    $registryPath = Get-FavoriteDirectoryRegistryPath
+    $registryPath = Get-FavouriteDirectoryRegistryPath
     $registry = @{}
     if (Test-Path -Path $registryPath) {
         $content = Get-Content -Path $registryPath -Raw
@@ -92,32 +92,32 @@ function Set-FavoriteDirectory {
 
 <#
 .SYNOPSIS
-    Removes a favorite directory.
+    Removes a favourite directory.
 .DESCRIPTION
-    This function removes a favorite directory by name.
+    This function removes a favourite directory by name.
 .PARAMETER Name
-    The name of the favorite directory to remove.
+    The name of the favourite directory to remove.
 .INPUTS
     System.String
 .OUTPUTS
     None
 #>
-function Remove-FavoriteDirectory {
+function Remove-FavouriteDirectory {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true, Position = 0)]
         [string]$Name
     )
 
-    $registryPath = Get-FavoriteDirectoryRegistryPath
+    $registryPath = Get-FavouriteDirectoryRegistryPath
     if (-not (Test-Path -Path $registryPath)) {
-        Write-Error "Favorite directory registry not found." -ErrorAction Stop
+        Write-Error "Favourite directory registry not found." -ErrorAction Stop
         return
     }
     
     $content = Get-Content -Path $registryPath -Raw
     if ([string]::IsNullOrWhiteSpace($content)) {
-        Write-Error "Favorite directory '$Name' not found."
+        Write-Error "Favourite directory '$Name' not found."
         return
     }
 
@@ -126,23 +126,23 @@ function Remove-FavoriteDirectory {
         $registry.Remove($Name)
         $registry | ConvertTo-Json | Set-Content -Path $registryPath
     } else {
-        Write-Warning "Favorite directory '$Name' not found."
+        Write-Warning "Favourite directory '$Name' not found."
     }
 }
 
 <#
 .SYNOPSIS
-    Gets the list of favorite directories.
+    Gets the list of favourite directories.
 .DESCRIPTION
-    This function retrieves the list of favorite directories from the registry.
+    This function retrieves the list of favourite directories from the registry.
 .OUTPUTS
     System.Collections.Hashtable
 #>
-function Get-FavoriteDirectoryList {
+function Get-FavouriteDirectoryList {
     [CmdletBinding()]
     param ()
 
-    $registryPath = Get-FavoriteDirectoryRegistryPath
+    $registryPath = Get-FavouriteDirectoryRegistryPath
     if (-not (Test-Path -Path $registryPath)) {
         return @{}
     }
@@ -157,15 +157,15 @@ function Get-FavoriteDirectoryList {
 
 <#
 .SYNOPSIS
-    Shows the help message for the FavoriteDirectory module.
+    Shows the help message for the FavouriteDirectory module.
 .DESCRIPTION
-    This function displays the usage information for the FavoriteDirectory module.
+    This function displays the usage information for the FavouriteDirectory module.
 .OUTPUTS
     None
 #>
-function Show-FavoriteDirectoryHelp {
+function Show-FavouriteDirectoryHelp {
     Write-Output "
-FavoriteDirectory - A PowerShell module to manage favorite directory aliases.
+FavouriteDirectory - A PowerShell module to manage favourite directory aliases.
 
 Usage:
     fd <name>
@@ -176,10 +176,10 @@ Usage:
     fd -h | -help
 
 Actions:
-    <name>              Go to a favorite directory.
-    -a, -add            Add a new favorite directory.
-    -l, -list           List all favorite directories or a specific one.
-    -d, -delete         Delete a favorite directory.
+    <name>              Go to a favourite directory.
+    -a, -add            Add a new favourite directory.
+    -l, -list           List all favourite directories or a specific one.
+    -d, -delete         Delete a favourite directory.
     -r, -registry       Show the location of the registry.
     -h, -help           Show this help message.
 "
@@ -187,9 +187,9 @@ Actions:
 
 <#
 .SYNOPSIS
-    Invokes a favorite directory action.
+    Invokes a favourite directory action.
 .DESCRIPTION
-    This function invokes a favorite directory action based on the provided parameters.
+    This function invokes a favourite directory action based on the provided parameters.
 .PARAMETER Action
     The action to perform.
 .PARAMETER Arguments
@@ -199,13 +199,13 @@ Actions:
 .OUTPUTS
     None
 #>
-function Invoke-FavoriteDirectory {
+function Invoke-FavouriteDirectory {
     param()
     
     $Arguments = $args
 
     if ($Arguments.Count -eq 0) {
-        Show-FavoriteDirectoryHelp
+        Show-FavouriteDirectoryHelp
         return
     }
 
@@ -220,16 +220,16 @@ function Invoke-FavoriteDirectory {
     switch ($Action) {
         '-l' {
             if (-not $Alias) {
-                Get-FavoriteDirectoryList
+                Get-FavouriteDirectoryList
             } else {
-                Get-FavoriteDirectory -Name $Alias
+                Get-FavouriteDirectory -Name $Alias
             }
         }
         '-list' {
             if (-not $Alias) {
-                Get-FavoriteDirectoryList
+                Get-FavouriteDirectoryList
             } else {
-                Get-FavoriteDirectory -Name $Alias
+                Get-FavouriteDirectory -Name $Alias
             }
         }
         '-a' {
@@ -237,43 +237,43 @@ function Invoke-FavoriteDirectory {
                 Write-Error "-a or -add requires two arguments: name and path."
                 return
             }
-            Set-FavoriteDirectory -Name $Alias -Path $Path
+            Set-FavouriteDirectory -Name $Alias -Path $Path
         }
         '-add' {
             if (-not $Path) {
                 Write-Error "-a or -add requires two arguments: name and path."
                 return
             }
-            Set-FavoriteDirectory -Name $Alias -Path $Path
+            Set-FavouriteDirectory -Name $Alias -Path $Path
         }
         '-d' {
             if (-not $Alias) {
                 Write-Error "-d or -delete requires one argument: name."
                 return
             }
-            Remove-FavoriteDirectory -Name $Alias
+            Remove-FavouriteDirectory -Name $Alias
         }
         '-delete' {
             if (-not $Alias) {
                 Write-Error "-d or -delete requires one argument: name."
                 return
             }
-            Remove-FavoriteDirectory -Name $Alias
+            Remove-FavouriteDirectory -Name $Alias
         }
         '-r' {
-            Get-FavoriteDirectoryRegistryPath
+            Get-FavouriteDirectoryRegistryPath
         }
         '-registry' {
-            Get-FavoriteDirectoryRegistryPath
+            Get-FavouriteDirectoryRegistryPath
         }
         '-h' {
-            Show-FavoriteDirectoryHelp
+            Show-FavouriteDirectoryHelp
         }
         '-help' {
-            Show-FavoriteDirectoryHelp
+            Show-FavouriteDirectoryHelp
         }
         default {
-            $path = Get-FavoriteDirectory -Name $Action
+            $path = Get-FavouriteDirectory -Name $Action
             if ($path) {
                 Set-Location -Path $path
             }
@@ -281,6 +281,6 @@ function Invoke-FavoriteDirectory {
     }
 }
 
-New-Alias -Name fd -Value Invoke-FavoriteDirectory
+New-Alias -Name fd -Value Invoke-FavouriteDirectory
 
-Export-ModuleMember -Function Get-FavoriteDirectory, Set-FavoriteDirectory, Remove-FavoriteDirectory, Get-FavoriteDirectoryRegistryPath, Get-FavoriteDirectoryList, Invoke-FavoriteDirectory, Show-FavoriteDirectoryHelp -Alias fd
+Export-ModuleMember -Function Get-FavouriteDirectory, Set-FavouriteDirectory, Remove-FavouriteDirectory, Get-FavouriteDirectoryRegistryPath, Get-FavouriteDirectoryList, Invoke-FavouriteDirectory, Show-FavouriteDirectoryHelp -Alias fd

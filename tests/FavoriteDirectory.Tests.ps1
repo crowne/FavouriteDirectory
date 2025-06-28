@@ -24,7 +24,7 @@ Describe 'Favorite Directory Functions' {
     Context 'Set-FavoriteDirectory' {
         It 'Should add a new favorite directory' {
             Set-FavoriteDirectory -Name 'test' -Path 'C:\test'
-            $registry = Get-Content -Path $script:testRegistry_path | ConvertFrom-Json -AsHashtable
+            $registry = Get-Content -Path $script:testRegistryPath | ConvertFrom-Json -AsHashtable
             $registry.test | Should -Be 'C:\test'
         }
     }
@@ -46,7 +46,7 @@ Describe 'Favorite Directory Functions' {
         It 'Should remove an existing favorite directory' {
             Set-FavoriteDirectory -Name 'testremove' -Path 'C:\testremove'
             Remove-FavoriteDirectory -Name 'testremove'
-            $registry = Get-Content -Path $script:testRegistryPath | ConvertFrom-Json
+            $registry = Get-Content -Path $script:testRegistryPath | ConvertFrom-Json -AsHashtable
             $registry.PSObject.Properties.Name | Should -Not -Contains 'testremove'
         }
 

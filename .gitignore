@@ -1,0 +1,18 @@
+# PowerShell
+*.ps1xml
+*.pssc
+*.psrc
+
+# Test results
+*.xml
+
+# Dependencies
+/Modules
+
+# Build artifacts
+/bin
+/obj
+
+# User-specific files
+.vscode/
+.history/

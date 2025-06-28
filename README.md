@@ -1,86 +1,44 @@
 # FavoriteDirectory
 
-## Description
-
-A brief description of your project goes here.
+A PowerShell module to manage favorite directory aliases.
+This module was written using Gemini cli and claude-code as a learning kata for me to become familiar with the ai code tools.
 
 ## Installation
 
 To install the module, run the following command:
 
 ```powershell
-Install-Module -Name FavoriteDirectory
+Import-Module -Name "C:\github\crowne\FavoriteDirectory\FavoriteDirectory\FavoriteDirectory.psd1"
 ```
 
 ## Usage
 
-To use the module, first import it:
+### Add a favorite directory
 
 ```powershell
-Import-Module -Name FavoriteDirectory
+fd -a <name> <path>
 ```
 
-To list FavouriteDirectory entries in the registry
+### List favorite directories
 
 ```powershell
-Get-FavoriteDirectoryList
+fd -l
 ```
 
-To display the location of the FavouriteDirectory registry
+### Get a favorite directory
 
 ```powershell
-Get-FavoriteDirectoryRegistryPath
+fd -l <name>
 ```
 
-To add an entry into the registry
+### Remove a favorite directory
 
 ```powershell
-Set-FavoriteDirectory favName C:\target\location
+fd -d <name>
 ```
 
-To view an entry from the registry
+### Go to a favorite directory
 
 ```powershell
-Get-FavoriteDirectory favName
+fd <name>
 ```
-
-To remove an entry from the registry
-
-```powershell
-Remove-FavoriteDirectory favName
-```
-
-
-Then, you can use the functions in the module.
-
-## Development
-
-### Build
-
-This module does not require a build process.
-
-### Test
-
-Before running the tests, ensure you have the Pester module installed. You can install it with the following command:
-
-```powershell
-Install-Module -Name Pester -Force -SkipPublisherCheck
-```
-
-To run the tests for the module, run the following command:
-
-```powershell
-Invoke-Pester -Path tests/FavoriteDirectory.Tests.ps1
-```
-
-### Publish
-
-To publish the module, run the following command:
-
-```powershell
-Publish-Module -Name FavoriteDirectory -NuGetApiKey <Your-API-Key>
-```
-
-## License
-
-This project is licensed under the MIT License.

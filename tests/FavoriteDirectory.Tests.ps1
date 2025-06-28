@@ -70,4 +70,42 @@ Describe 'Favorite Directory Functions' {
             $list.Count | Should -Be 0
         }
     }
+
+    Context 'Invoke-FavoriteDirectory' {
+        It 'Should list all favorites with -l' {
+            Set-FavoriteDirectory -Name 'test1' -Path 'C:\test1'
+            Set-FavoriteDirectory -Name 'test2' -Path 'C:\test2'
+            $list = Invoke-FavoriteDirectory -Action '-l'
+            $list.Count | Should -Be 2
+        }
+
+        It 'Should get a specific favorite with -l and an argument' {
+            Set-FavoriteDirectory -Name 'test1' -Path 'C:\test1'
+            $path = Invoke-FavoriteDirectory -Action '-l' -Arguments 'test1'
+            $path | Should -Be 'C:\test1'
+        }
+
+        It 'Should add a favorite with -a' {
+            Invoke-FavoriteDirectory -Action '-a' -Arguments 'testadd', 'C:\testadd'
+            $path = Get-FavoriteDirectory -Name 'testadd'
+            $path | Should -Be 'C:\testadd'
+        }
+
+        It 'Should delete a favorite with -d' {
+            Set-FavoriteDirectory -Name 'testdel' -Path 'C:\testdel'
+            Invoke-FavoriteDirectory -Action '-d' -Arguments 'testdel'
+            $path = Get-FavoriteDirectory -Name 'testdel'
+            $path | Should -BeNull
+        }
+
+        It 'Should change directory with a default action' {
+            Set-FavoriteDirectory -Name 'testcd' -Path $PSScriptRoot
+            Invoke-FavoriteDirectory -Action 'testcd'
+            $pwd.Path | Should -Be $PSScriptRoot
+        }
+
+        It 'Should not allow adding a favorite with a name starting with a hyphen' {
+            { Invoke-FavoriteDirectory -Action '-a' -Arguments '-invalid', 'C:\invalid' } | Should -Throw
+        }
+    }
 }

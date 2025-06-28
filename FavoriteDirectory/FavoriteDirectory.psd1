@@ -9,5 +9,5 @@
     PowerShellVersion = '5.1'
     DotNetFrameworkVersion = '4.5.2'
     RequiredModules = @()
-    
+    AliasesToExport = 'fd'
 }

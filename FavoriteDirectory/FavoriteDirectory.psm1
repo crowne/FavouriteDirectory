@@ -198,11 +198,9 @@ Actions:
     None
 #>
 function Invoke-FavoriteDirectory {
-    [CmdletBinding()]
-    param (
-        [Parameter(ValueFromRemainingArguments = $true)]
-        [string[]]$Arguments
-    )
+    param()
+    
+    $Arguments = $args
 
     if ($Arguments.Count -eq 0) {
         Show-FavoriteDirectoryHelp
@@ -210,11 +208,7 @@ function Invoke-FavoriteDirectory {
     }
 
     $Action = $Arguments[0]
-    if ($Arguments.Count -eq 1) {
-        $RemainingArgs = @()
-    } else {
-        $RemainingArgs = $Arguments[1..($Arguments.Count - 1)]
-    }
+    $RemainingArgs = if ($Arguments.Count -gt 1) { $Arguments[1..($Arguments.Count - 1)] } else { @() }
     
     switch ($Action) {
         '-l' {

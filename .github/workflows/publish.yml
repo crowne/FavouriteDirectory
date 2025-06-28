@@ -1,0 +1,22 @@
+name: Publish PowerShell Module
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install PowerShell
+        uses: PowerShell/PowerShell@v1
+
+      - name: Publish module to PowerShell Gallery
+        shell: pwsh
+        run: |
+          $modulePath = "$(Resolve-Path ./FavouriteDirectory)"
+          Publish-Module -Path $modulePath -NuGetApiKey "${{ secrets.NUGET_API_KEY }}" -Verbose

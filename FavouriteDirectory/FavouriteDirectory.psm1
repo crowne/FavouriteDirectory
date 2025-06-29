@@ -189,6 +189,7 @@ Usage:
     fd -l [<name>]
     fd -d <name>
     fd -r
+    fd -v
     fd -h | -help
 
 Actions:
@@ -197,6 +198,7 @@ Actions:
     -l, -list           List all favourite directories or a specific one.
     -d, -delete         Delete a favourite directory.
     -r, -registry       Show the location of the registry.
+    -v, -version        Show the module version number.
     -h, -help           Show this help message.
 "
 }

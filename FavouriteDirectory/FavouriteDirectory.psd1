@@ -10,4 +10,12 @@
     DotNetFrameworkVersion = '4.5.2'
     RequiredModules = @()
     AliasesToExport = 'fd'
+    PrivateData = @{
+        PSData = @{
+            ProjectUri = 'https://github.com/crowne/FavouriteDirectory'
+            LicenseUri = 'https://opensource.org/license/mit/'
+            Tags = @('PowerShell', 'FavouriteDirectory', 'Alias', 'Module')
+            ReleaseNotes = 'Initial release of FavouriteDirectory module.'
+        }
+    }
 }

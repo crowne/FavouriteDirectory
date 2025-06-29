@@ -11,6 +11,19 @@ To install the module, run the following command:
 Import-Module -Name "C:\github\crowne\FavouriteDirectory\FavouriteDirectory\FavouriteDirectory.psd1"
 ```
 
+Or add powershell gallery to your
+`C:\Users\User.Name\AppData\Roaming\NuGet\nuget.config`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <packageSources>
+    <add key="Microsoft Visual Studio Offline Packages" value="C:\Program Files (x86)\Microsoft SDKs\NuGetPackages\" />
+    <add key="PSGallery" value="https://www.powershellgallery.com/api/v2/" />
+  </packageSources>
+</configuration>
+```
+
 ## Usage
 
 ### Add a favourite directory
@@ -42,3 +55,13 @@ fd -d <name>
 ```powershell
 fd <name>
 ```
+
+## Publishing
+Before publishing, run these checks
+
+```powershell
+Test-ModuleManifest .\FavouriteDirectory\FavouriteDirectory.psd1
+Publish-Module -Path ./FavouriteDirectory -NuGetApiKey ${secret} -WhatIf -Verbose
+```
+
+

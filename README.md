@@ -3,15 +3,23 @@
 A PowerShell module to manage favourite directory aliases.
 This module was written using Gemini cli, claude-code and co-pilot as a learning kata for me to become familiar with the ai code tools.
 
+Published here:
+https://www.powershellgallery.com/packages/FavouriteDirectory/
+
 ## Installation
 
-To install the module, run the following command:
+To import the module fir the current session, run the following command:
 
 ```powershell
-Import-Module -Name "C:\github\crowne\FavouriteDirectory\FavouriteDirectory\FavouriteDirectory.psd1"
+git clone https://github.com/crowne/FavouriteDirectory.git
+cd FavouriteDirectory
+Import-Module -Name "./FavouriteDirectory/FavouriteDirectory.psd1"
 ```
 
-Or add powershell gallery to your
+It is published to PowershellGallery, how it's unsigned so you would need a bypass, which is unadvised
+`Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`
+
+Add powershell gallery to your
 `C:\Users\User.Name\AppData\Roaming\NuGet\nuget.config`
 
 ```xml

@@ -1,6 +1,6 @@
 @{
     RootModule = 'FavouriteDirectory.psm1'
-    ModuleVersion = '0.0.2'
+    ModuleVersion = '0.0.3'
     GUID = 'e0c6e7a8-17a9-4e2a-8b6b-5b6a5f3e6e1d' # This will be populated with a unique GUID
     Author = 'Neil Crow'
     CompanyName = 'Crowne'

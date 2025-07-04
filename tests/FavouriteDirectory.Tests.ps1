@@ -75,47 +75,54 @@ Describe 'Favourite Directory Functions' {
         It 'Should list all favourites with -l' {
             Set-FavouriteDirectory -Name 'test1' -Path 'C:\test1'
             Set-FavouriteDirectory -Name 'test2' -Path 'C:\test2'
-            $list = Invoke-FavouriteDirectory -Action '-l'
+            $list = Invoke-FavouriteDirectory -l
             $list.Count | Should -Be 2
         }
 
         It 'Should get a specific favourite with -l and an argument' {
             Set-FavouriteDirectory -Name 'test1' -Path 'C:\test1'
-            $path = Invoke-FavouriteDirectory -Action '-l' -Arguments 'test1'
+            $path = Invoke-FavouriteDirectory -l 'test1'
             $path | Should -Be 'C:\test1'
         }
 
         It 'Should add a favourite with -a' {
-            Invoke-FavouriteDirectory -Action '-a' -Arguments 'testadd', 'C:\testadd'
+            Invoke-FavouriteDirectory -a 'testadd' 'C:\testadd'
             $path = Get-FavouriteDirectory -Name 'testadd'
             $path | Should -Be 'C:\testadd'
         }
 
         It 'Should delete a favourite with -d' {
             Set-FavouriteDirectory -Name 'testdel' -Path 'C:\testdel'
-            Invoke-FavouriteDirectory -Action '-d' -Arguments 'testdel'
+            Invoke-FavouriteDirectory -d 'testdel'
             $path = Get-FavouriteDirectory -Name 'testdel'
             $path | Should -BeNull
         }
 
         It 'Should change directory with a default action' {
             Set-FavouriteDirectory -Name 'testcd' -Path $PSScriptRoot
-            Invoke-FavouriteDirectory -Action 'testcd'
+            Invoke-FavouriteDirectory 'testcd'
             $pwd.Path | Should -Be $PSScriptRoot
         }
 
         It 'Should not allow adding a favourite with a name starting with a hyphen' {
-            { Invoke-FavouriteDirectory -Action '-a' -Arguments '-invalid', 'C:\invalid' } | Should -Throw
+            { Invoke-FavouriteDirectory -a '-invalid' 'C:\invalid' } | Should -Throw
         }
 
         It 'Should display help with -h' {
-            $result = Invoke-FavouriteDirectory -Action '-h'
+            $result = Invoke-FavouriteDirectory -h
             $result | Should -Not -BeNullOrEmpty
         }
 
         It 'Should display help with -help' {
-            $result = Invoke-FavouriteDirectory -Action '-help'
+            $result = Invoke-FavouriteDirectory -help
             $result | Should -Not -BeNullOrEmpty
+        }
+
+        It 'Should list all favourites with no arguments' {
+            Set-FavouriteDirectory -Name 'test1' -Path 'C:\test1'
+            Set-FavouriteDirectory -Name 'test2' -Path 'C:\test2'
+            $list = Invoke-FavouriteDirectory
+            $list.Count | Should -Be 2
         }
     }
 }

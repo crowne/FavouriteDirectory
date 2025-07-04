@@ -184,6 +184,7 @@ function Show-FavouriteDirectoryHelp {
 FavouriteDirectory - A PowerShell module to manage favourite directory aliases.
 
 Usage:
+    fd
     fd <name>
     fd -a <name> <path>
     fd -l [<name>]
@@ -193,6 +194,7 @@ Usage:
     fd -h | -help
 
 Actions:
+    <no arguments>      Show a list of all favourite directories.
     <name>              Go to a favourite directory.
     -a, -add            Add a new favourite directory.
     -l, -list           List all favourite directories or a specific one.
@@ -223,7 +225,8 @@ function Invoke-FavouriteDirectory {
     $Arguments = $args
 
     if ($Arguments.Count -eq 0) {
-        Show-FavouriteDirectoryHelp
+        Write-Output "For help options try fd -h"
+        Get-FavouriteDirectoryList
         return
     }
 
@@ -231,7 +234,7 @@ function Invoke-FavouriteDirectory {
     if ($Arguments.Count -gt 1) {
         $Alias = $Arguments[1]
     }
-    if ($Arguments.Count -gt 1) {
+    if ($Arguments.Count -gt 2) {
         $Path = $Arguments[2]
     }
     

@@ -68,8 +68,17 @@ fd <name>
 
 The devcontainer in here is for running claude-code in a container for windows environments.
 
+### Running Tests
+
+To run the tests for this module, use the following command:
+
+```powershell
+pwsh -NoProfile .\tests\FavouriteDirectory.Tests.ps1
+```
+
 ## Publishing
 Before publishing, run these checks
+
 
 ```powershell
 Test-ModuleManifest .\FavouriteDirectory\FavouriteDirectory.psd1

@@ -64,6 +64,10 @@ fd -d <name>
 fd <name>
 ```
 
+## Development
+
+The devcontainer in here is for running claude-code in a container for windows environments.
+
 ## Publishing
 Before publishing, run these checks
 

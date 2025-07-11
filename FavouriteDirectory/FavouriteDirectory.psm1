@@ -62,6 +62,53 @@ function Get-FavouriteDirectory {
 .OUTPUTS
     None
 #>
+<#
+.SYNOPSIS
+    Saves the favourite directory registry.
+.DESCRIPTION
+    This function saves the favourite directory registry to a file, ensuring the entries are sorted by name.
+.PARAMETER Registry
+    The hashtable representing the registry.
+.PARAMETER Path
+    The path to the registry file.
+.INPUTS
+    System.Collections.Hashtable
+    System.String
+.OUTPUTS
+    None
+#>
+function Save-FavouriteDirectoryRegistry {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [System.Collections.Hashtable]$Registry,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Path
+    )
+
+    $sortedRegistry = [System.Collections.Specialized.OrderedDictionary]@{}
+    $Registry.GetEnumerator() | Sort-Object Name | ForEach-Object {
+        $sortedRegistry[$_.Name] = $_.Value
+    }
+
+    $sortedRegistry | ConvertTo-Json | Set-Content -Path $Path
+}
+
+<#
+.SYNOPSIS
+    Sets a favourite directory.
+.DESCRIPTION
+    This function sets a favourite directory by name and path.
+.PARAMETER Name
+    The name of the favourite directory to set.
+.PARAMETER Path
+    The path of the favourite directory to set.
+.INPUTS
+    System.String
+.OUTPUTS
+    None
+#>
 function Set-FavouriteDirectory {
     [CmdletBinding()]
     param (
@@ -87,7 +134,7 @@ function Set-FavouriteDirectory {
 
     $registry[$Name] = $Path
 
-    $registry | ConvertTo-Json | Set-Content -Path $registryPath
+    Save-FavouriteDirectoryRegistry -Registry $registry -Path $registryPath
 }
 
 <#
@@ -124,7 +171,7 @@ function Remove-FavouriteDirectory {
     $registry = $content | ConvertFrom-Json -AsHashtable
     if ($registry.ContainsKey($Name)) {
         $registry.Remove($Name)
-        $registry | ConvertTo-Json | Set-Content -Path $registryPath
+        Save-FavouriteDirectoryRegistry -Registry $registry -Path $registryPath
     } else {
         Write-Warning "Favourite directory '$Name' not found."
     }
@@ -310,4 +357,4 @@ function Invoke-FavouriteDirectory {
 
 New-Alias -Name fd -Value Invoke-FavouriteDirectory
 
-Export-ModuleMember -Function Get-FavouriteDirectory, Set-FavouriteDirectory, Remove-FavouriteDirectory, Get-FavouriteDirectoryRegistryPath, Get-FavouriteDirectoryList, Get-FavouriteDirectoryVersion, Invoke-FavouriteDirectory, Show-FavouriteDirectoryHelp -Alias fd
+Export-ModuleMember -Function Get-FavouriteDirectory, Set-FavouriteDirectory, Remove-FavouriteDirectory, Get-FavouriteDirectoryRegistryPath, Get-FavouriteDirectoryList, Get-FavouriteDirectoryVersion, Invoke-FavouriteDirectory, Show-FavouriteDirectoryHelp, Save-FavouriteDirectoryRegistry -Alias fd

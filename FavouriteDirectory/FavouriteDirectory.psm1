@@ -179,6 +179,38 @@ function Remove-FavouriteDirectory {
 
 <#
 .SYNOPSIS
+    Creates a new favourite directory.
+.DESCRIPTION
+    This function creates a new directory, adds it to the favourites, and navigates to it.
+.PARAMETER Name
+    The name of the favourite directory to create.
+.PARAMETER Path
+    The path of the favourite directory to create.
+.INPUTS
+    System.String
+.OUTPUTS
+    None
+#>
+function New-FavouriteDirectory {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true, Position = 0)]
+        [string]$Name,
+
+        [Parameter(Mandatory = $true, Position = 1)]
+        [string]$Path
+    )
+
+    if (-not (Test-Path -Path $Path)) {
+        New-Item -Path $Path -ItemType Directory -Force | Out-Null
+    }
+
+    Set-FavouriteDirectory -Name $Name -Path $Path
+    Set-Location -Path $Path
+}
+
+<#
+.SYNOPSIS
     Gets the list of favourite directories.
 .DESCRIPTION
     This function retrieves the list of favourite directories from the registry.
@@ -234,6 +266,7 @@ Usage:
     fd
     fd <name>
     fd -a <name> <path>
+    fd -n <name> <path>
     fd -l [<name>]
     fd -d <name>
     fd -r
@@ -244,6 +277,7 @@ Actions:
     <no arguments>      Show a list of all favourite directories.
     <name>              Go to a favourite directory.
     -a, -add            Add a new favourite directory.
+    -n, -new            Create and add a new favourite directory.
     -l, -list           List all favourite directories or a specific one.
     -d, -delete         Delete a favourite directory.
     -r, -registry       Show the location of the registry.
@@ -314,6 +348,20 @@ function Invoke-FavouriteDirectory {
             }
             Set-FavouriteDirectory -Name $Alias -Path $Path
         }
+        '-n' {
+            if (-not $Path) {
+                Write-Error "-n or -new requires two arguments: name and path."
+                return
+            }
+            New-FavouriteDirectory -Name $Alias -Path $Path
+        }
+        '-new' {
+            if (-not $Path) {
+                Write-Error "-n or -new requires two arguments: name and path."
+                return
+            }
+            New-FavouriteDirectory -Name $Alias -Path $Path
+        }
         '-d' {
             if (-not $Alias) {
                 Write-Error "-d or -delete requires one argument: name."
@@ -357,4 +405,4 @@ function Invoke-FavouriteDirectory {
 
 New-Alias -Name fd -Value Invoke-FavouriteDirectory
 
-Export-ModuleMember -Function Get-FavouriteDirectory, Set-FavouriteDirectory, Remove-FavouriteDirectory, Get-FavouriteDirectoryRegistryPath, Get-FavouriteDirectoryList, Get-FavouriteDirectoryVersion, Invoke-FavouriteDirectory, Show-FavouriteDirectoryHelp, Save-FavouriteDirectoryRegistry -Alias fd
+Export-ModuleMember -Function Get-FavouriteDirectory, Set-FavouriteDirectory, Remove-FavouriteDirectory, Get-FavouriteDirectoryRegistryPath, Get-FavouriteDirectoryList, Get-FavouriteDirectoryVersion, Invoke-FavouriteDirectory, Show-FavouriteDirectoryHelp, Save-FavouriteDirectoryRegistry, New-FavouriteDirectory -Alias fd

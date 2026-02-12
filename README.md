@@ -8,7 +8,8 @@ https://www.powershellgallery.com/packages/FavouriteDirectory/
 
 ## Installation
 
-To import the module fir the current session, run the following command:
+### Temporary Current Session
+To import the module for the current session, run the following command:
 
 ```powershell
 git clone https://github.com/crowne/FavouriteDirectory.git
@@ -16,11 +17,16 @@ cd FavouriteDirectory
 Import-Module -Name "./FavouriteDirectory/FavouriteDirectory.psd1"
 ```
 
-It is published to PowershellGallery, how it's unsigned so you would need a bypass, which is unadvised
+### Permanent Install
+It is published to PowershellGallery, how it's unsigned so you would need a bypass<sup>1.</sup>
+  1. ... which is unadvised so make a judgement call
+
 `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`
 
 Add powershell gallery to your
 `C:\Users\User.Name\AppData\Roaming\NuGet\nuget.config`
+
+`$Env:APPDATA/NuGet/nuget.config`
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -31,6 +37,11 @@ Add powershell gallery to your
   </packageSources>
 </configuration>
 ```
+
+`PS> Install-Module -Name FavouriteDirectory`
+
+See https://www.powershellgallery.com/packages/FavouriteDirectory/0.0.3
+
 
 ## Usage
 

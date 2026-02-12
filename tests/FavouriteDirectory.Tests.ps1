@@ -1,3 +1,5 @@
+#Requires -modules  @{ ModuleName="Pester"; ModuleVersion="5.7.1" }
+
 BeforeAll {
     # Import the module being tested
     Import-Module -Name .\FavouriteDirectory\FavouriteDirectory.psd1 -Force

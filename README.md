@@ -81,6 +81,11 @@ The devcontainer in here is for running claude-code in a container for windows e
 
 ### Running Tests
 
+Before running the tests ensure that Pester 5.7.1 is installed:
+```Powershell
+Install-Module Pester -RequiredVersion 5.7.1 -Force -SkipPublisherCheck
+```
+
 To run the tests for this module, use the following command:
 
 ```powershell

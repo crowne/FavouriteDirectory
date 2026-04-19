@@ -236,6 +236,129 @@ function Get-FavouriteDirectoryList {
 
 <#
 .SYNOPSIS
+    Gets the git status of a directory.
+.DESCRIPTION
+    This function retrieves the git branch and local status (staged, unstaged, untracked)
+    for a given directory. Returns $null if the path does not exist or is not a git repository.
+    Does not perform a remote fetch — only local state is reported.
+.PARAMETER Path
+    The path to the directory to check.
+.INPUTS
+    System.String
+.OUTPUTS
+    PSCustomObject with Branch, Staged, Unstaged, Untracked properties, or $null.
+#>
+function Get-FavouriteDirectoryGitStatus {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true, Position = 0)]
+        [string]$Path
+    )
+
+    if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+        return $null
+    }
+
+    if (-not (Test-Path -Path $Path -PathType Container)) {
+        return $null
+    }
+
+    $isRepo = & git -C $Path rev-parse --is-inside-work-tree 2>$null
+    if ($isRepo -ne 'true') {
+        return $null
+    }
+
+    $branch = & git -C $Path branch --show-current 2>$null
+    $porcelain = & git -C $Path status --porcelain 2>$null
+
+    $staged = 0
+    $unstaged = 0
+    $untracked = 0
+
+    foreach ($line in $porcelain) {
+        if ($line.Length -lt 2) { continue }
+        $indexStatus = $line[0]
+        $workStatus  = $line[1]
+        if ($line.StartsWith('??')) {
+            $untracked++
+        } else {
+            if ($indexStatus -ne ' ' -and $indexStatus -ne '?') { $staged++ }
+            if ($workStatus  -ne ' ' -and $workStatus  -ne '?') { $unstaged++ }
+        }
+    }
+
+    return [PSCustomObject]@{
+        Branch    = $branch
+        Staged    = $staged
+        Unstaged  = $unstaged
+        Untracked = $untracked
+    }
+}
+
+<#
+.SYNOPSIS
+    Displays the list of favourite directories with optional git status.
+.DESCRIPTION
+    This function displays favourite directories as compact single-line entries.
+    For git repositories, the current branch and local change counts are appended.
+    Format: "name   path   [branch | +N ~N ?N]"
+    Zero-value indicators are omitted. The pipe and indicators are omitted when the repo is clean.
+.PARAMETER Name
+    Optional. When provided, displays only the entry with this name.
+.INPUTS
+    System.String
+.OUTPUTS
+    System.String
+#>
+function Show-FavouriteDirectoryList {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $false, Position = 0)]
+        [string]$Name
+    )
+
+    if ($Name) {
+        $path = Get-FavouriteDirectory -Name $Name
+        if (-not $path) { return }
+        $entries = @{ $Name = $path }
+    } else {
+        $entries = Get-FavouriteDirectoryList
+    }
+
+    if ($entries.Count -eq 0) {
+        Write-Output "No favourite directories registered."
+        return
+    }
+
+    $nameWidth = ($entries.Keys | Measure-Object -Maximum -Property Length).Maximum
+    $pathWidth = ($entries.Values | Measure-Object -Maximum -Property Length).Maximum
+
+    foreach ($key in ($entries.Keys | Sort-Object)) {
+        $dirPath = $entries[$key]
+        $gitStatus = Get-FavouriteDirectoryGitStatus -Path $dirPath
+
+        $gitBlock = ''
+        if ($gitStatus) {
+            $indicators = @()
+            if ($gitStatus.Staged    -gt 0) { $indicators += "+$($gitStatus.Staged)" }
+            if ($gitStatus.Unstaged  -gt 0) { $indicators += "~$($gitStatus.Unstaged)" }
+            if ($gitStatus.Untracked -gt 0) { $indicators += "?$($gitStatus.Untracked)" }
+
+            if ($indicators.Count -gt 0) {
+                $gitBlock = "  [$($gitStatus.Branch) | $($indicators -join ' ')]"
+            } else {
+                $gitBlock = "  [$($gitStatus.Branch)]"
+            }
+        }
+
+        $paddedName = $key.PadRight($nameWidth)
+        $paddedPath = $dirPath.PadRight($pathWidth)
+        Write-Output "$paddedName  $paddedPath$gitBlock"
+    }
+}
+
+<#
+.SYNOPSIS
     Gets the version of favourite directory module.
 .DESCRIPTION
     This function returns the version of favourite directory module.
@@ -307,7 +430,7 @@ function Invoke-FavouriteDirectory {
 
     if ($Arguments.Count -eq 0) {
         Write-Output "For help options try fd -h"
-        Get-FavouriteDirectoryList
+        Show-FavouriteDirectoryList
         return
     }
 
@@ -322,16 +445,16 @@ function Invoke-FavouriteDirectory {
     switch ($Action) {
         '-l' {
             if (-not $Alias) {
-                Get-FavouriteDirectoryList
+                Show-FavouriteDirectoryList
             } else {
-                Get-FavouriteDirectory -Name $Alias
+                Show-FavouriteDirectoryList -Name $Alias
             }
         }
         '-list' {
             if (-not $Alias) {
-                Get-FavouriteDirectoryList
+                Show-FavouriteDirectoryList
             } else {
-                Get-FavouriteDirectory -Name $Alias
+                Show-FavouriteDirectoryList -Name $Alias
             }
         }
         '-a' {
@@ -405,4 +528,4 @@ function Invoke-FavouriteDirectory {
 
 New-Alias -Name fd -Value Invoke-FavouriteDirectory
 
-Export-ModuleMember -Function Get-FavouriteDirectory, Set-FavouriteDirectory, Remove-FavouriteDirectory, Get-FavouriteDirectoryRegistryPath, Get-FavouriteDirectoryList, Get-FavouriteDirectoryVersion, Invoke-FavouriteDirectory, Show-FavouriteDirectoryHelp, Save-FavouriteDirectoryRegistry, New-FavouriteDirectory -Alias fd
+Export-ModuleMember -Function Get-FavouriteDirectory, Set-FavouriteDirectory, Remove-FavouriteDirectory, Get-FavouriteDirectoryRegistryPath, Get-FavouriteDirectoryList, Get-FavouriteDirectoryVersion, Invoke-FavouriteDirectory, Show-FavouriteDirectoryHelp, Save-FavouriteDirectoryRegistry, New-FavouriteDirectory, Get-FavouriteDirectoryGitStatus, Show-FavouriteDirectoryList -Alias fd

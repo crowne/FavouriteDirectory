@@ -73,18 +73,82 @@ Describe 'Favourite Directory Functions' {
         }
     }
 
+    Context 'Get-FavouriteDirectoryGitStatus' {
+        It 'Should return null when git is not installed' {
+            Mock -CommandName Get-Command -ModuleName FavouriteDirectory -ParameterFilter { $Name -eq 'git' } -MockWith { return $null }
+            $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+            $result = Get-FavouriteDirectoryGitStatus -Path $repoRoot
+            $result | Should -BeNull
+        }
+
+        It 'Should return null for a non-existent path' {
+            $result = Get-FavouriteDirectoryGitStatus -Path 'C:\nonexistent_path_xyz_123'
+            $result | Should -BeNull
+        }
+
+        It 'Should return null for a path that is not a git repository' {
+            $result = Get-FavouriteDirectoryGitStatus -Path $env:TEMP
+            $result | Should -BeNull
+        }
+
+        It 'Should return an object with a Branch property for a valid git repository' {
+            $repoRoot = Resolve-Path (Join-Path $PSScriptRoot '..')
+            $result = Get-FavouriteDirectoryGitStatus -Path $repoRoot
+            $result | Should -Not -BeNull
+            $result.Branch | Should -Not -BeNullOrEmpty
+            $result.PSObject.Properties.Name | Should -Contain 'Staged'
+            $result.PSObject.Properties.Name | Should -Contain 'Unstaged'
+            $result.PSObject.Properties.Name | Should -Contain 'Untracked'
+        }
+    }
+
+    Context 'Show-FavouriteDirectoryList' {
+        It 'Should output a line containing the name and path for a non-git directory' {
+            Set-FavouriteDirectory -Name 'tmpdir' -Path $env:TEMP
+            $output = Show-FavouriteDirectoryList
+            $line = $output | Where-Object { $_ -match 'tmpdir' }
+            $line | Should -Not -BeNullOrEmpty
+            $line | Should -Match $env:TEMP.Replace('\', '\\')
+            $line | Should -Not -Match '\['
+        }
+
+        It 'Should output a line with a git branch indicator for a git repository' {
+            $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+            Set-FavouriteDirectory -Name 'repofav' -Path $repoRoot
+            $output = Show-FavouriteDirectoryList
+            $line = $output | Where-Object { $_ -match 'repofav' }
+            $line | Should -Not -BeNullOrEmpty
+            $line | Should -Match '\['
+        }
+
+        It 'Should return a single line when -Name is specified' {
+            Set-FavouriteDirectory -Name 'singletest' -Path $env:TEMP
+            $output = Show-FavouriteDirectoryList -Name 'singletest'
+            $lines = @($output | Where-Object { $_ -match '\S' })
+            $lines.Count | Should -Be 1
+        }
+
+        It 'Should display a message when no favourites are registered' {
+            Set-Content -Path $script:testRegistryPath -Value "{}" -Force
+            $output = Show-FavouriteDirectoryList
+            $output | Should -Match 'No favourite'
+        }
+    }
+
     Context 'Invoke-FavouriteDirectory' {
         It 'Should list all favourites with -l' {
             Set-FavouriteDirectory -Name 'test1' -Path 'C:\test1'
             Set-FavouriteDirectory -Name 'test2' -Path 'C:\test2'
             $list = Invoke-FavouriteDirectory -l
-            $list.Count | Should -Be 2
+            ($list | Where-Object { $_ -match 'test1' }) | Should -Not -BeNullOrEmpty
+            ($list | Where-Object { $_ -match 'test2' }) | Should -Not -BeNullOrEmpty
         }
 
         It 'Should get a specific favourite with -l and an argument' {
             Set-FavouriteDirectory -Name 'test1' -Path 'C:\test1'
-            $path = Invoke-FavouriteDirectory -l 'test1'
-            $path | Should -Be 'C:\test1'
+            $output = Invoke-FavouriteDirectory -l 'test1'
+            $output | Should -Match 'test1'
+            $output | Should -Match 'C:\\test1'
         }
 
         It 'Should add a favourite with -a' {
@@ -124,7 +188,8 @@ Describe 'Favourite Directory Functions' {
             Set-FavouriteDirectory -Name 'test1' -Path 'C:\test1'
             Set-FavouriteDirectory -Name 'test2' -Path 'C:\test2'
             $list = Invoke-FavouriteDirectory
-            $list.Count | Should -Be 2
+            ($list | Where-Object { $_ -match 'test1' }) | Should -Not -BeNullOrEmpty
+            ($list | Where-Object { $_ -match 'test2' }) | Should -Not -BeNullOrEmpty
         }
     }
 }

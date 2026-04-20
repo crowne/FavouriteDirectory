@@ -45,6 +45,10 @@ Tests use `Mock -CommandName Get-FavouriteDirectoryRegistryPath -ModuleName Favo
 - **All functions use `[CmdletBinding()]`** and include comment-based help (`.SYNOPSIS`, `.DESCRIPTION`, `.PARAMETER`, `.INPUTS`, `.OUTPUTS`).
 - **Export everything public** via `Export-ModuleMember` at the bottom of the `.psm1`.
 
+## Before Committing Changes
+
+Always bump `ModuleVersion` in `FavouriteDirectory/FavouriteDirectory.psd1` when making any functional change.
+
 ## Publishing Pre-flight
 
 ```powershell

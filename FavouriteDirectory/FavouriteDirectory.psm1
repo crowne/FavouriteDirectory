@@ -263,19 +263,28 @@ function Get-FavouriteDirectoryGitStatus {
         return $null
     }
 
-    $isRepo = & git -C $Path rev-parse --is-inside-work-tree 2>$null
-    if ($isRepo -ne 'true') {
+    $output = & git -C $Path status --porcelain=v1 --branch 2>$null
+    if ($LASTEXITCODE -ne 0) {
         return $null
     }
 
-    $branch = & git -C $Path branch --show-current 2>$null
-    $porcelain = & git -C $Path status --porcelain 2>$null
+    # Parse branch from the first line: "## <branch>...remote" or "## No commits yet on <branch>"
+    $branchLine = $output | Select-Object -First 1
+    $branch = if ($branchLine -match '^## No commits yet on (.+)$') {
+        $Matches[1]
+    } elseif ($branchLine -match '^## HEAD \(no branch\)') {
+        'HEAD'
+    } elseif ($branchLine -match '^## ([^.]+)') {
+        $Matches[1]
+    } else {
+        $branchLine -replace '^## ', ''
+    }
 
     $staged = 0
     $unstaged = 0
     $untracked = 0
 
-    foreach ($line in $porcelain) {
+    foreach ($line in ($output | Select-Object -Skip 1)) {
         if ($line.Length -lt 2) { continue }
         $indexStatus = $line[0]
         $workStatus  = $line[1]
@@ -330,12 +339,14 @@ function Show-FavouriteDirectoryList {
         return
     }
 
+    $gitAvailable = [bool](Get-Command git -ErrorAction SilentlyContinue)
+
     $nameWidth = ($entries.Keys | Measure-Object -Maximum -Property Length).Maximum
     $pathWidth = ($entries.Values | Measure-Object -Maximum -Property Length).Maximum
 
     foreach ($key in ($entries.Keys | Sort-Object)) {
         $dirPath = $entries[$key]
-        $gitStatus = Get-FavouriteDirectoryGitStatus -Path $dirPath
+        $gitStatus = if ($gitAvailable) { Get-FavouriteDirectoryGitStatus -Path $dirPath } else { $null }
 
         $gitBlock = ''
         if ($gitStatus) {
